@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LavaCar - Agendamento</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #0056b3; }
+    img.logo { width: 150px; margin-bottom: 20px; }
+    label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #0056b3;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #003d82; }
+    .success { color: green; font-weight: bold; margin-top: 15px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="assets/logo.png" alt="Logo Adilson e Gabriel LavaCar" class="logo" />
+
+    <h1>Agende sua Lavagem</h1>
+    <p>Preencha os dados abaixo para agendamento.</p>
+
+    <form id="lavaCarForm">
+      <label>Nome Completo</label>
+      <input type="text" id="nome" required />
+
+      <label>E-mail</label>
+      <input type="email" id="email" required />
+
+      <label>Telefone (WhatsApp)</label>
+      <input type="tel" id="telefone" placeholder="(99) 99999-9999" required />
+
+      <label>CPF</label>
+      <input type="text" id="cpf" placeholder="000.000.000-00" required />
+
+      <label>Tipo de Lavagem</label>
+      <select id="tipoLavagem" multiple size="4" required>
+        <option value="Externa">Lavagem Externa</option>
+        <option value="Completa">Lavagem Completa</option>
+        <option value="Premium">Lavagem Premium (Cera + Aspiração)</option>
+        <option value="Motor">Lavagem de Motor</option>
+      </select>
+
+      <label>
+        <input type="checkbox" id="autorizaDados" />
+        Autorizo o uso dos meus dados para promoções
+      </label>
+
+      <button type="submit">Agendar Lavagem</button>
+    </form>
+
+    <p id="status" class="success">
+      Agendamento realizado com sucesso! Em breve entraremos em contato.
+    </p>
+  </div>
+
+  <script>
+    document.getElementById("lavaCarForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const data = {
+        nome: form.nome.value,
+        email: form.email.value,
+        telefone: form.telefone.value,
+        cpf: form.cpf.value,
+        tipoLavagem: Array.from(form.tipoLavagem.selectedOptions).map(o => o.value).join(", "),
+        autorizaDados: form.autorizaDados.checked ? "Sim" : "Não",
+        dataAgendamento: new Date().toLocaleString(),
+      };
+
+      // 🔥 Substitua pela URL do seu Web App do Google Apps Script
+      const WEB_APP_URL = "https://script.google.com/macros/s/XXXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec";
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          form.reset();
+          document.getElementById("status").style.display = "block";
+          setTimeout(() => { document.getElementById("status").style.display = "none"; }, 3000);
+        } else {
+          alert("Erro ao agendar. Tente novamente.");
+        }
+      } catch (error) {
+        alert("Erro de conexão. Tente mais tarde.");
+      }
+    });
+  </script>
+</body>
+</html>
